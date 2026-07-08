@@ -1,0 +1,18 @@
+# Local starting point ONLY — lets you see the stack behave before you touch
+# Kubernetes. This file is not the deliverable.
+services:
+  model-server:
+    build: ./services/model-server
+    environment:
+      - MODEL_VERSION=1.0
+    ports:
+      - "8001:8001"
+
+  gateway:
+    build: ./services/gateway
+    environment:
+      - MODEL_SERVER_URL=http://model-server:8001
+    ports:
+      - "8000:8000"
+    depends_on:
+      - model-server

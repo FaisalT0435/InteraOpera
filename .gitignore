@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+!example.tfvars
+
+# Secrets — NEVER commit these
+*.env
+.env
+.env.*
+secrets/
+**/secret.yaml
+**/secrets.yaml
+
+# Docker
+*.tar
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+__MACOSX/
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
+
+# Kind / Kubeconfig
+kubeconfig
+kubeconfig.yaml
+.kube/
+
+# Embedding model cache (downloaded at build time)
+# models/ — keep this out of git, re-downloaded via Dockerfile
+
+# Temp files
+pdf_content.txt
+materials.zip
+materials/

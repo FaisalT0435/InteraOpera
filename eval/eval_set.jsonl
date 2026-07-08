@@ -1,0 +1,21 @@
+{"id": 1, "prompt": "What is the base currency of the Meridian Fixed Income Fund?", "expected": "The base currency of the Meridian Fixed Income Fund is the Singapore dollar (SGD)."}
+{"id": 2, "prompt": "Which regulator supervises the Meridian Fixed Income Fund?", "expected": "The fund is supervised by the Monetary Authority of Singapore (MAS)."}
+{"id": 3, "prompt": "What is the maximum allocation to high yield bonds in the Meridian Fixed Income Fund?", "expected": "High yield bonds are capped at 15% of the fund's net asset value."}
+{"id": 4, "prompt": "What is the minimum allocation to investment grade corporate bonds?", "expected": "Investment grade corporate bonds must make up at least 40% of the portfolio."}
+{"id": 5, "prompt": "What is the permitted modified duration range for the portfolio?", "expected": "Portfolio modified duration must stay between 2.0 and 6.5 years."}
+{"id": 6, "prompt": "What is the breach action if modified duration exceeds its limit?", "expected": "The Chief Investment Officer must be notified within one business day and a remediation plan filed within five."}
+{"id": 7, "prompt": "What is the single-issuer concentration cap?", "expected": "Exposure to any single issuer is capped at 5% of net asset value."}
+{"id": 8, "prompt": "What is the issuer group concentration cap?", "expected": "Aggregate exposure to any issuer group is capped at 10% of net asset value."}
+{"id": 9, "prompt": "What is the liquidity floor for the Meridian Fixed Income Fund?", "expected": "At least 10% of the portfolio must be held in cash or Singapore Treasury bills."}
+{"id": 10, "prompt": "How often must the fund produce its regulatory compliance report?", "expected": "The regulatory compliance report is produced quarterly."}
+{"id": 11, "prompt": "What is the retention period for audit records?", "expected": "All audit records must be retained for seven years."}
+{"id": 12, "prompt": "Who owns the escalation of a limit breach?", "expected": "The Chief Risk Officer owns breach escalation."}
+{"id": 13, "prompt": "What is the maximum allocation to structured credit?", "expected": "Structured credit is capped at 10% of the fund's net asset value."}
+{"id": 14, "prompt": "What is the minimum weighted average credit rating of the portfolio?", "expected": "The portfolio must maintain a weighted average credit rating of BBB or better."}
+{"id": 15, "prompt": "What is the maximum unhedged non-SGD currency exposure?", "expected": "Unhedged non-SGD currency exposure is capped at 15% of net asset value."}
+{"id": 16, "prompt": "How often are the fund's risk metrics monitored?", "expected": "All risk metrics are monitored daily."}
+{"id": 17, "prompt": "What benchmark does the Meridian Fixed Income Fund track?", "expected": "The fund tracks the SGD Composite Bond Benchmark."}
+{"id": 18, "prompt": "Who is the custodian of the Meridian Fixed Income Fund?", "expected": "Meridian Trust Services Pte Ltd acts as custodian of the fund."}
+{"id": 19, "prompt": "In what year was the Meridian Fixed Income Fund launched?", "expected": "The Meridian Fixed Income Fund was launched in 2018."}
+{"id": 20, "prompt": "How often is the fund's net asset value published?", "expected": "The fund's net asset value is published daily."}
+{"id": 21, "prompt": "What is the aggregate cap on non-investment-grade exposure?", "expected": "Aggregate non-investment-grade exposure is capped at 20% of net asset value."}
