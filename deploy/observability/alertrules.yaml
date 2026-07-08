@@ -1,0 +1,105 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: meridian-slo-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus-stack     # must match Helm release name
+    role: alert-rules
+spec:
+  groups:
+    - name: meridian.slo
+      interval: 30s
+      rules:
+
+        # ── Availability SLO ─────────────────────────────────────────────────
+        - alert: HighErrorRate
+          expr: |
+            (
+              sum(rate(gateway_requests_total{status=~"5.."}[5m]))
+              /
+              sum(rate(gateway_requests_total[5m]))
+            ) > 0.005
+          for: 5m
+          labels:
+            severity: page
+            slo: availability
+          annotations:
+            summary: "Gateway error rate exceeds 0.5% — availability SLO at risk"
+            description: |
+              Current error rate: {{ printf "%.2f" $value }}%
+              SLO target: < 0.5% (99.5% availability)
+              Action: Check model server health, recent deployments, fault injection status.
+
+        # ── Latency SLO ──────────────────────────────────────────────────────
+        - alert: HighLatencyP95
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum(rate(gateway_request_duration_seconds_bucket[5m])) by (le)
+            ) > 1.2
+          for: 5m
+          labels:
+            severity: page
+            slo: latency
+          annotations:
+            summary: "Gateway p95 latency exceeds 1200ms — latency SLO at risk"
+            description: |
+              Current p95: {{ printf "%.0f" (mul $value 1000) }}ms
+              SLO target: ≤ 1200ms
+              Action: Check model server queue depth, in-flight requests, gateway connection pooling.
+
+        # ── Model Server Availability ────────────────────────────────────────
+        - alert: ModelServerDown
+          expr: up{job="model-server"} == 0
+          for: 1m
+          labels:
+            severity: page
+            slo: availability
+          annotations:
+            summary: "Model server is unreachable"
+            description: "meridian-slm has been down for > 1 minute. Gateway will return 502."
+
+        # ── Qdrant Availability ───────────────────────────────────────────────
+        - alert: QdrantDown
+          expr: up{job="qdrant"} == 0
+          for: 2m
+          labels:
+            severity: page
+          annotations:
+            summary: "Qdrant vector store is unreachable"
+            description: "RAG chat path is fully broken. All /v1/rag/chat requests will fail."
+
+        # ── RAG Service ───────────────────────────────────────────────────────
+        - alert: RAGHighErrorRate
+          expr: |
+            (
+              sum(rate(rag_requests_total{status!="200"}[5m]))
+              /
+              sum(rate(rag_requests_total[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: page
+          annotations:
+            summary: "RAG API error rate exceeds 5%"
+            description: "Error rate: {{ printf \"%.2f\" (mul $value 100) }}%. Check Qdrant connectivity and model server."
+
+        # ── GPU / KV-Cache (for future GPU deployment) ────────────────────────
+        - alert: KVCacheHigh
+          expr: model_kv_cache_usage_ratio > 0.85
+          for: 5m
+          labels:
+            severity: warn
+          annotations:
+            summary: "KV-cache usage above 85% — latency degradation likely"
+            description: "Consider scaling out model server replicas or reducing batch size."
+
+        - alert: ModelQueueDepthHigh
+          expr: model_queue_depth > 10
+          for: 2m
+          labels:
+            severity: warn
+          annotations:
+            summary: "Model server queue depth > 10 — throughput may be saturated"
+            description: "Queue depth: {{ $value }}. Consider horizontal scaling."

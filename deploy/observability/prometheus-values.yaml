@@ -1,0 +1,104 @@
+# Prometheus Stack Helm values for local kind cluster
+# Deployed via: helm install prometheus-stack prometheus-community/kube-prometheus-stack
+
+# ── Prometheus ────────────────────────────────────────────────────────────────
+prometheus:
+  prometheusSpec:
+    # Scrape all pods with prometheus.io/scrape: "true" annotation
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    additionalScrapeConfigs:
+      - job_name: 'meridian-pods'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ['meridian']
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port, __meta_kubernetes_pod_ip]
+            action: replace
+            regex: (\d+);((([0-9]+?)(\.|$)){4})
+            replacement: $2:$1
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: job
+
+    retention: 7d
+    retentionSize: "5GB"
+
+    # NodePort for external access on kind
+    service:
+      type: NodePort
+      nodePort: 30090
+
+# ── Grafana ───────────────────────────────────────────────────────────────────
+grafana:
+  adminPassword: "admin"
+
+  service:
+    type: NodePort
+    nodePort: 30030
+
+  # Auto-provision dashboards from ConfigMaps
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+
+  grafana.ini:
+    auth:
+      disable_login_form: false
+    server:
+      root_url: "http://localhost:3000"
+
+# ── Alertmanager ──────────────────────────────────────────────────────────────
+alertmanager:
+  service:
+    type: NodePort
+    nodePort: 30093
+
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      group_by: ['alertname', 'job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
+      receiver: 'default'
+      routes:
+        - match:
+            severity: page
+          receiver: 'page'
+
+    receivers:
+      - name: 'default'
+        # Logs to Alertmanager UI — sufficient for this assignment
+      - name: 'page'
+        # In real deployment: PagerDuty / Slack webhook here
+
+# ── Reduce resource usage for local kind ─────────────────────────────────────
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
