@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-07-10T09:03:37.981287+00:00",
+  "decision": "ROLLBACK",
+  "thresholds": {
+    "accuracy_min": 0.9,
+    "p95_latency_max_ms": 1200,
+    "error_rate_max": 0.01
+  },
+  "direct_path": {
+    "accuracy": 1.0,
+    "p95_latency_ms": 439.3,
+    "error_rate": 0.0,
+    "questions_total": 21,
+    "questions_correct": 21,
+    "pass": true
+  },
+  "rag_path": {
+    "accuracy": 0.8571,
+    "p95_latency_ms": 3108.9,
+    "error_rate": 0.0,
+    "questions_total": 21,
+    "questions_correct": 18,
+    "pass": false
+  },
+  "overall_pass": false,
+  "version": "1.1"
+}

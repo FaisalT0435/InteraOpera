@@ -1,0 +1,10 @@
+﻿{
+    "active_since":  "2026-07-11T09:31:39.886460088Z",
+    "state":  "firing",
+    "alert_name":  "HighErrorRate",
+    "captured_at":  "2026-07-11T16:40:18.1118590+07:00",
+    "fault_cleared_at":  "2026-07-11T16:40:18.1283693+07:00",
+    "description":  "Current error rate: 0.52%\nSLO target: \u003c 0.5% (99.5% availability)\nAction: Check model server health, recent deployments, fault injection status.\n",
+    "summary":  "Gateway error rate exceeds 0.5% ΓÇö availability SLO at risk",
+    "error_rate_value":  "5.220125786163523e-01"
+}

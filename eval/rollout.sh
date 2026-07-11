@@ -12,6 +12,8 @@
 
 set -euo pipefail
 
+export PATH="$PWD/bin:$PATH"
+
 VERSION="${1:-}"
 if [[ -z "$VERSION" ]]; then
   echo "Usage: $0 <VERSION>"
@@ -48,7 +50,9 @@ echo "    Image found."
 
 # Load into kind if not already loaded
 echo "==> Loading image into kind cluster..."
-kind load docker-image "meridian-slm:${VERSION}" --name meridian-cluster 2>/dev/null || true
+docker save -o canary-image.tar "meridian-slm:${VERSION}"
+kind load image-archive canary-image.tar --name meridian-cluster 2>/dev/null || true
+rm -f canary-image.tar
 
 # ── Step 2: Deploy canary ─────────────────────────────────────────────────────
 echo ""

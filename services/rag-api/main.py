@@ -117,7 +117,7 @@ async def rag_chat(req: ChatRequest):
 
         # ── Step 1: Retrieve relevant passages ────────────────────────────────
         t0 = time.perf_counter()
-        passages = retrieve(question, qdrant_url=QDRANT_URL, top_k=5)
+        passages = retrieve(question, qdrant_url=QDRANT_URL, top_k=8)
         RETRIEVAL_LATENCY.observe(time.perf_counter() - t0)
 
         if not passages:

@@ -1,0 +1,9 @@
+{
+  "phase": "BEFORE_FIX",
+  "concurrency": 8,
+  "total_requests": 40,
+  "errors": 0,
+  "p50_ms": 3085.3,
+  "p95_ms": 14112.1,
+  "p99_ms": 14503.4
+}

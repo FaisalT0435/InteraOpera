@@ -45,7 +45,7 @@ spec:
           annotations:
             summary: "Gateway p95 latency exceeds 1200ms — latency SLO at risk"
             description: |
-              Current p95: {{ printf "%.0f" (mul $value 1000) }}ms
+              Current p95: {{ $value }}s
               SLO target: ≤ 1200ms
               Action: Check model server queue depth, in-flight requests, gateway connection pooling.
 
@@ -83,7 +83,7 @@ spec:
             severity: page
           annotations:
             summary: "RAG API error rate exceeds 5%"
-            description: "Error rate: {{ printf \"%.2f\" (mul $value 100) }}%. Check Qdrant connectivity and model server."
+            description: "Error rate ratio: {{ printf \"%.2f\" $value }}. Check Qdrant connectivity and model server."
 
         # ── GPU / KV-Cache (for future GPU deployment) ────────────────────────
         - alert: KVCacheHigh

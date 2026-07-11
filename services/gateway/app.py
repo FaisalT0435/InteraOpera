@@ -7,8 +7,9 @@ own running it in production.
 
 import os
 import time
+from contextlib import asynccontextmanager
 
-import requests
+import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from prometheus_client import (
@@ -20,7 +21,26 @@ from prometheus_client import (
 
 MODEL_SERVER_URL = os.environ.get("MODEL_SERVER_URL", "http://localhost:8001")
 
-app = FastAPI(title="meridian inference gateway")
+# ── Fix: module-level shared async client with connection pool ────────────────
+# Initialize it inside the FastAPI lifespan so it attaches to the correct
+# async event loop created by uvicorn.
+_http_client = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global _http_client
+    _http_client = httpx.AsyncClient(
+        limits=httpx.Limits(
+            max_keepalive_connections=20,
+            max_connections=100,
+            keepalive_expiry=30,
+        ),
+        timeout=httpx.Timeout(30.0),
+    )
+    yield
+    await _http_client.aclose()
+
+app = FastAPI(title="meridian inference gateway", lifespan=lifespan)
 
 REQUESTS = Counter(
     "gateway_requests_total", "Requests handled by the gateway", ["route", "status"]
@@ -36,9 +56,9 @@ LATENCY = Histogram(
 @app.get("/healthz")
 async def healthz():
     try:
-        upstream = requests.get(f"{MODEL_SERVER_URL}/healthz", timeout=2)
+        upstream = await _http_client.get(f"{MODEL_SERVER_URL}/healthz")
         upstream_ok = upstream.status_code == 200
-    except requests.RequestException:
+    except httpx.RequestError:
         upstream_ok = False
     status = 200 if upstream_ok else 503
     return JSONResponse(
@@ -58,12 +78,12 @@ async def chat_completions(request: Request):
     started = time.perf_counter()
     status = "200"
     try:
-        upstream = requests.post(
+        upstream = await _http_client.post(
             f"{MODEL_SERVER_URL}/v1/chat/completions", json=payload
         )
         status = str(upstream.status_code)
         return JSONResponse(upstream.json(), status_code=upstream.status_code)
-    except requests.RequestException as exc:
+    except httpx.RequestError as exc:
         status = "502"
         return JSONResponse(
             {"error": {"message": f"model server unreachable: {exc}", "type": "bad_gateway"}},

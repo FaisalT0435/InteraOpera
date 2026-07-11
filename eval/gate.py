@@ -198,9 +198,10 @@ def main():
     print("\n" + "=" * 60)
     print(f"  DECISION: {evidence['decision']}")
     print("=" * 60)
-    print(f"  Direct path accuracy : {evidence['direct_path']['accuracy']*100:.1f}% (need ≥90%)")
-    print(f"  Direct path p95      : {evidence['direct_path']['p95_latency_ms']:.0f}ms (need ≤1200ms)")
-    print(f"  RAG path accuracy    : {evidence['rag_path']['accuracy']*100:.1f}% (need ≥90%)")
+    print(f"  Direct path accuracy : {evidence['direct_path']['accuracy']*100:.1f}% (need >=90%)")
+    print(f"  Direct path p95      : {evidence['direct_path']['p95_latency_ms']:.0f}ms (need <=1200ms)")
+    print(f"  RAG path accuracy    : {evidence['rag_path']['accuracy']*100:.1f}% (need >=90%)")
+    print(f"  RAG path p95         : {evidence['rag_path']['p95_latency_ms']:.0f}ms (need <=1200ms)")
     print("=" * 60 + "\n")
 
     # Save evidence

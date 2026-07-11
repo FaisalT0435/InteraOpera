@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-07-10T09:09:48.967111+00:00",
+  "decision": "PROMOTE",
+  "thresholds": {
+    "accuracy_min": 0.9,
+    "p95_latency_max_ms": 1200,
+    "error_rate_max": 0.01
+  },
+  "direct_path": {
+    "accuracy": 1.0,
+    "p95_latency_ms": 408.7,
+    "error_rate": 0.0,
+    "questions_total": 21,
+    "questions_correct": 21,
+    "pass": true
+  },
+  "rag_path": {
+    "accuracy": 1.0,
+    "p95_latency_ms": 789.8,
+    "error_rate": 0.0,
+    "questions_total": 21,
+    "questions_correct": 21,
+    "pass": true
+  },
+  "overall_pass": true,
+  "version": "1.1"
+}
