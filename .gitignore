@@ -57,3 +57,5 @@ materials.zip
 materials/
 *.pdf
 implementation_plan.md
+*.docx
+generate_summary.py

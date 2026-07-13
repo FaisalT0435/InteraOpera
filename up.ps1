@@ -2,6 +2,8 @@ param (
     [string]$Version = "1.1"
 )
 
+$env:Path = "$PSScriptRoot\bin;" + $env:Path
+
 $ClusterName = "meridian-cluster"
 $ErrorActionPreference = "Stop"
 
@@ -14,7 +16,7 @@ docker build -t meridian-rag-api:latest services/rag-api/
 
 Write-Host "==> Provisioning kind cluster + Helm releases via Terraform..." -ForegroundColor Cyan
 Push-Location infra
-terraform init -input=$false
+terraform init -input=false
 terraform apply -auto-approve
 Pop-Location
 
