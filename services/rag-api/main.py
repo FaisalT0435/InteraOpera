@@ -31,7 +31,7 @@ REFUSAL_PHRASE = "I cannot find the answer to this question in the provided cont
 
 app = FastAPI(title="Meridian RAG Chat Service")
 
-# ── Prometheus metrics ────────────────────────────────────────────────────────
+# Prometheus metrics
 RAG_REQUESTS = Counter("rag_requests_total", "RAG chat requests", ["status"])
 RAG_LATENCY = Histogram(
     "rag_request_duration_seconds",
@@ -49,14 +49,14 @@ CONTEXT_TOKENS = Histogram(
     buckets=[100, 300, 600, 1000, 2000, 3000, 4000],
 )
 
-# ── Shared async HTTP client (connection pooling) ─────────────────────────────
+# Shared async HTTP client (connection pooling)
 http_client = httpx.AsyncClient(
     limits=httpx.Limits(max_keepalive_connections=20, max_connections=100),
     timeout=httpx.Timeout(30.0),
 )
 
 
-# ── Schemas ───────────────────────────────────────────────────────────────────
+# Schemas
 class ChatRequest(BaseModel):
     question: str
 
@@ -71,7 +71,7 @@ class ChatResponse(BaseModel):
     citations: list[Citation]
 
 
-# ── Startup ───────────────────────────────────────────────────────────────────
+# Startup
 @app.on_event("startup")
 async def startup():
     if AUTO_INGEST:
@@ -83,7 +83,7 @@ async def startup():
             logger.warning(f"Ingestion failed (will retry on /v1/rag/ingest): {e}")
 
 
-# ── Endpoints ─────────────────────────────────────────────────────────────────
+# Endpoints
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "rag-api"}
@@ -115,7 +115,7 @@ async def rag_chat(req: ChatRequest):
         if not question:
             raise HTTPException(status_code=400, detail="question must not be empty")
 
-        # ── Step 1: Retrieve relevant passages ────────────────────────────────
+        # Step 1: Retrieve relevant passages
         t0 = time.perf_counter()
         passages = retrieve(question, qdrant_url=QDRANT_URL, top_k=8)
         RETRIEVAL_LATENCY.observe(time.perf_counter() - t0)
@@ -125,7 +125,7 @@ async def rag_chat(req: ChatRequest):
             RAG_REQUESTS.labels(status="200").inc()
             return ChatResponse(answer=REFUSAL_PHRASE, citations=[])
 
-        # ── Step 2: Assemble grounded prompt ─────────────────────────────────
+        # Step 2: Assemble grounded prompt
         context_parts = [p["text"] for p in passages]
         context_text = "\n---\n".join(context_parts)
 
@@ -138,7 +138,7 @@ async def rag_chat(req: ChatRequest):
         # Grounded prompt format per starter README
         grounded_prompt = f"{question}\n\n{GROUNDED_MARKER}\n{context_text}"
 
-        # ── Step 3: Call model server ─────────────────────────────────────────
+        # Step 3: Call model server
         payload = {
             "model": "meridian-slm",
             "messages": [{"role": "user", "content": grounded_prompt}],
@@ -157,7 +157,7 @@ async def rag_chat(req: ChatRequest):
         data = resp.json()
         answer = data["choices"][0]["message"]["content"]
 
-        # ── Step 4: Handle refusal ────────────────────────────────────────────
+        # Step 4: Handle refusal
         is_refusal = REFUSAL_PHRASE.lower() in answer.lower()
         citations = (
             []

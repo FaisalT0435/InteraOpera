@@ -21,7 +21,7 @@ from prometheus_client import (
 
 MODEL_SERVER_URL = os.environ.get("MODEL_SERVER_URL", "http://localhost:8001")
 
-# ── Fix: module-level shared async client with connection pool ────────────────
+# Fix: module-level shared async client with connection pool
 # Initialize it inside the FastAPI lifespan so it attaches to the correct
 # async event loop created by uvicorn.
 _http_client = None

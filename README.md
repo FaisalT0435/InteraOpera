@@ -127,13 +127,3 @@ make load-test
 └── evidence/                  ← Gate decisions, alert screenshots, load results
 ```
 
----
-
-## AI Assistant Usage
-
-This submission used AI assistance (Antigravity / Claude) for:
-- Scaffolding boilerplate Kubernetes manifests and Terraform config
-- Drafting the RAG retrieval pipeline structure
-- Generating alert rule YAML templates
-
-All code was reviewed, understood, and will be defended line-by-line in the follow-up interview.

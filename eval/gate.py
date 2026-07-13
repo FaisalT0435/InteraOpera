@@ -92,7 +92,7 @@ def evaluate(
             expected = item["expected"]
             qid = item["id"]
 
-            # ── Direct path ───────────────────────────────────────────────
+            # Direct path evaluation
             try:
                 answer, latency = call_gateway(client, gateway_url, question)
                 direct_latencies.append(latency)
@@ -107,7 +107,7 @@ def evaluate(
                 if verbose:
                     print(f"  [!] Q{qid} direct  ERROR: {e}")
 
-            # ── RAG path ──────────────────────────────────────────────────
+            # RAG path evaluation
             try:
                 answer, latency = call_rag(client, rag_url, question)
                 rag_latencies.append(latency)
