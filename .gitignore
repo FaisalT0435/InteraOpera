@@ -59,3 +59,4 @@ materials/
 implementation_plan.md
 *.docx
 generate_summary.py
+bin/
